@@ -1,0 +1,59 @@
+<template>
+  <el-dialog title="字幕编辑器" v-model="dialogVisible" width="80%">
+    <el-table :data="editableSubtitles" style="width: 100%">
+      <el-table-column prop="start" label="开始时间">
+        <template #default="scope">
+          <el-input v-model="scope.row.start"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column prop="end" label="结束时间">
+        <template #default="scope">
+          <el-input v-model="scope.row.end"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column prop="text" label="字幕文本">
+        <template #default="scope">
+          <el-input type="textarea" v-model="scope.row.text"></el-input>
+        </template>
+      </el-table-column>
+    </el-table>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveSubtitles">保存</el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+  name: 'SubtitleEditor',
+  props: {
+    subtitles: Array
+  },
+  setup(props, { emit }) {
+    const dialogVisible = ref(false);
+    const editableSubtitles = ref([]);
+
+    const openEditor = () => {
+      editableSubtitles.value = JSON.parse(JSON.stringify(props.subtitles));
+      dialogVisible.value = true;
+    };
+
+    const saveSubtitles = () => {
+      emit('update-subtitles', editableSubtitles.value);
+      dialogVisible.value = false;
+    };
+
+    return {
+      dialogVisible,
+      editableSubtitles,
+      openEditor,
+      saveSubtitles
+    };
+  }
+}
+</script>
